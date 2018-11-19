@@ -18,7 +18,7 @@ namespace ShadowsHelp
 
         protected void btnSignIn_Click(object sender, EventArgs e)
         {
-            string Query = "select * from tbl_Users where Email='" + txtEmail.Value + "' and Password='" + txtPassword.Value + "'";
+            string Query = "select * from dbo.Users where Email='" + txtEmail.Value + "' and Password='" + txtPassword.Value + "'";
             if (ConnC.IsExist(Query))
             {
                 string UserName = ConnC.GetColumnVal(Query, "UserName");

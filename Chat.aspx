@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>ShadowHelp</title>
+    <title>ShadowsHelp</title>
 
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Content/style.css" rel="stylesheet" />
@@ -228,7 +228,7 @@
           <!-- mini logo for sidebar mini 50x50 pixels -->
           
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>SignalR</b> Chat App</span>
+          <span class="logo-lg"><b>SignalR</b>ShadowsHelp</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -244,7 +244,7 @@
                   <img src="<%= UserImage %>" class="user-image" alt="User Image" />
                   <span class="hidden-xs"><%= this.UserName %></span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu"> 
                   <!-- User image -->
                   <li class="user-header" >
                     <img src="<%= UserImage %>" class="img-circle" alt="User Image" />
@@ -357,6 +357,7 @@
                     <h4 class="modal-title">Change Profile Picture</h4>
                 </div>
                 <div class="modal-body">
+
                     <div class="container">
 
                         <asp:UpdatePanel ID="UpdatePanel1" runat="server">
@@ -381,7 +382,7 @@
                                             </td>
                                             <td class="col-md-4">
                                                 
-                                              <asp:Button ID="btnChangePicModel" runat="server" Text="Update Picture" CssClass="btn btn-flat btn-success" OnClick="btnChangePicModel_Click" />
+                                          <%--  <asp:Button ID="btnChangePicModel" runat="server" Text="Update Picture" CssClass="btn btn-flat btn-success" OnClick="btnChangePicModel_Click" />--%>
 
                                                    
                                             </td>

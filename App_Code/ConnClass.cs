@@ -22,7 +22,8 @@ namespace ShadowsHelp
             bool check = false;
             using (cmd = new SqlCommand(Query, con))
             {
-                 con.Open();
+               
+                con.Open();
                 sdr = cmd.ExecuteReader();
                 if (sdr.HasRows)
                     check = true;

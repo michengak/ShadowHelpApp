@@ -16,8 +16,8 @@ namespace ShadowsHelp
         }
         protected void btnRegister_ServerClick(object sender, EventArgs e)
         {
-            string Query = "insert into tbl_Users(UserName,Email,Password)Values('"+txtName.Value+"','"+txtEmail.Value+"','"+txtPassword.Value+"')";
-            string ExistQ = "select * from tbl_Users where Email='"+txtEmail.Value+"'";
+            string Query = "insert into dbo.Users(UserName,Email,PassWord)Values('"+txtName.Value+"','"+txtEmail.Value+"','"+txtPassword.Value+"')";
+            string ExistQ = "select * from dbo.Users where Email='"+txtEmail.Value+"'";
             if (!ConnC.IsExist(ExistQ))
             {
                 if (ConnC.ExecuteQuery(Query))

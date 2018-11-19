@@ -7,7 +7,7 @@ using Microsoft.AspNet.SignalR;
 
 namespace ShadowsHelp
 {
-    public class ChatHub :Hub
+    public class ChatHub : Hub
     {
         static List<Users> ConnectedUsers = new List<Users>();
         static List<Messages> CurrentMessage = new List<Messages>();
@@ -57,7 +57,7 @@ namespace ShadowsHelp
             string RetimgName = "images/dummy.png";
             try
             {
-                string query = "select Photo from tbl_Users where UserName='" + username + "'";
+                string query = "select Photo from dbo.Users where UserName='" + username + "'";
                 string ImageName = ConnC.GetColumnVal(query, "Photo");
 
                 if (ImageName != "")

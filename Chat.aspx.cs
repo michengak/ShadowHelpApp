@@ -38,7 +38,7 @@ namespace ShadowsHelp
         {
             if (Username != null)
             {
-                string query = "select Photo from tbl_Users where UserName='" + Username + "'";
+                string query = "select Photo from dbo.Users where UserName='" + Username + "'";
 
                 string ImageName = ConnC.GetColumnVal(query, "Photo");
                 if (ImageName != "")
@@ -48,7 +48,7 @@ namespace ShadowsHelp
 
         }
 
-        protected void btnChangePicModel_Click(object sender, EventArgs e)
+        protected void BtnChangePicModel_Click(object sender, EventArgs e)
         {
           
             string serverPath = HttpContext.Current.Server.MapPath("~/");
@@ -65,7 +65,7 @@ namespace ShadowsHelp
                 {
                     FileInfo fi = new FileInfo(FileWithPat);
                     string ImageName = fi.Name;
-                    string query = "update tbl_Users set Photo='" + ImageName + "' where UserName='" + UserName + "'";
+                    string query = "update dbo.Users set Photo='" + ImageName + "' where UserName='" + UserName + "'";
                     if (ConnC.ExecuteQuery(query))
                         UserImage = "images/DP/" + ImageName;
                 }

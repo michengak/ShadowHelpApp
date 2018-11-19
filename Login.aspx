@@ -11,7 +11,7 @@
     <link href="Content/icheck-bootstrap.css" rel="stylesheet" />
 </head>
 <body class="hold-transition login-page">
--
+    -
     <form id="form1" runat="server">
         <div class="login-box">
             <div class="login-logo">
@@ -25,31 +25,30 @@
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="password" id="txtPassword" class="form-control" placeholder="Password" required="required" runat="server" autocomplete="off"/>
+                    <input type="password" id="txtPassword" class="form-control" placeholder="Password" required="required" runat="server" autocomplete="off" />
                     <span class="fa fa-lock form-control-feedback"></span>
                 </div>
                 <div class="row">
-                  
-                    <!-- /.col -->
-                    <div class="col-xs-4">
-                        <asp:Button ID="btnSignIn" runat="server" OnClick="btnSignIn_Click" Text="Login" CssClass="btn btn-success btn-block btn-flat" /><br/>
 
-                    </div>
-
-                      <div class="col-xs-8">
-                        <a href="Register.aspx" class="btn btn-primary btn-block btn-flat">New User - Registration</a>
-
-                    </div>
-                    <!-- /.col -->
+               <!-- /.col -->   
+                <div class="col-xs-4">
+                       <asp:Button ID="btnSignIn" runat="server" OnClick="btnSignIn_Click" Text="Login" CssClass="btn btn-success btn-block btn-flat" /><br/>
                 </div>
-           
-               
+
+                <div class="col-xs-8">
+                    <a href="Register.aspx" class="btn btn-primary btn-block btn-flat">New User - Registration</a>
+
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.login-box-body -->
+
+
         </div>
+        <!-- /.login-box-body -->
+
     </form>
     <script src="plugins/jquery-1.9.1.min"></script>
     <script src="plugins/bootstrap.min.js"></script>
-    
+
 </body>
 </html>
