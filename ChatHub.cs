@@ -52,6 +52,12 @@ namespace ShadowsHelp
             // Refresh();
         }
 
+        // Clear Chat History
+        public void clearTimeout()
+        {
+            CurrentMessage.Clear();
+        }
+
         public string GetUserImage(string username)
         {
             string RetimgName = "images/dummy.png";
@@ -82,5 +88,26 @@ namespace ShadowsHelp
             }
             return base.OnDisconnected(stopCalled);
         }
+        public void SendPrivateMessage(string toUserId, string message)
+        {
+
+            string fromUserId = Context.ConnectionId;
+
+            var toUser = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == toUserId);
+            var fromUser = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
+
+            if (toUser != null && fromUser != null)
+            {
+                string CurrentDateTime = DateTime.Now.ToString();
+                string UserImg = GetUserImage(fromUser.UserName);
+                // send to 
+                Clients.Client(toUserId).sendPrivateMessage(fromUserId, fromUser.UserName, message, UserImg, CurrentDateTime);
+
+                // send to caller user
+                Clients.Caller.sendPrivateMessage(toUserId, fromUser.UserName, message, UserImg, CurrentDateTime);
+            }
+
+        }
+
     }
 }

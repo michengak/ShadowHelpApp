@@ -20,7 +20,7 @@
     <script type="text/javascript">
 
 
-
+        var IntervalVal;
         $(function () {
 
             // Declare a proxy to reference the hub. 
@@ -32,6 +32,15 @@
                 registerEvents(chatHub)
                
             });
+            
+            // Reset Message Counter on Hover
+            $("#divChatWindow").mouseover(function () {
+
+                $("#MsgCountMain").html('0');
+                $("#MsgCountMain").attr("title", '0 New Messages');
+            });
+
+
             $(document).on('change', '#<%= FileUpload1.ClientID%>', function (e) {
 
                 var tmppath = URL.createObjectURL(e.target.files[0]);
@@ -39,7 +48,28 @@
 
             });
 
+            
+            // Stop Title Alert
+            window.onfocus = function (event) {
+                if (event.explicitOriginalTarget === window) {
+
+                    clearInterval(IntervalVal);
+                    document.title = 'ShadowsHelp';
+                }
+            }
+
         });
+
+        // Show Title Alert
+        function ShowTitleAlert(newMessageTitle, pageTitle) {
+            if (document.title == pageTitle) {
+                document.title = newMessageTitle;
+            }
+            else {
+                document.title = pageTitle;
+            }
+        }
+        
 
         function registerEvents(chatHub) {
 
@@ -51,7 +81,20 @@
               
             }
 
+          
+        // Clear Chat
+        $('#btnClearChat').click(function () {
 
+            var msg = $("#divChatWindow").html();
+
+            if (msg.length > 0) {
+                chatHub.server.clearTimeout();
+                $('#divChatWindow').html('');
+
+            }
+        });
+  
+// Send Button Click Event
             $('#btnSendMsg').click(function () {
 
                 var msg = $("#txtMessage").val();
@@ -120,14 +163,74 @@
 
             }
 
-            chatHub.client.messageReceived = function (userName, message, time, userimg) {
+           chatHub.client.messageReceived = function (userName, message, time, userimg) {
 
                 AddMessage(userName, message, time, userimg);
+
+                // Display Message Count and Notification
+                var CurrUser1 = $('#hdUserName').val();
+                if (CurrUser1 != userName) {
+
+                    var msgcount = $('#MsgCountMain').html();
+                    msgcount++;
+                    $("#MsgCountMain").html(msgcount);
+                    $("#MsgCountMain").attr("title", msgcount + ' New Messages');
+                    var Notification = 'New Message From ' + userName;
+                    IntervalVal = setInterval("ShowTitleAlert('ShadowsHelp', '" + Notification + "')", 800);
+
+                }
+           }
+           
+        
+
+
+            
+            chatHub.client.sendPrivateMessage = function (windowId, fromUserName, message, userimg, CurrentDateTime) {
+
+                var ctrId = 'private_' + windowId;
+                if ($('#' + ctrId).length == 0) {
+
+                    OpenPrivateChatBox(chatHub, windowId, ctrId, fromUserName, userimg);
+
+                }
+
+                var CurrUser = $('#hdUserName').val();
+                var Side = 'right';
+                var TimeSide = 'left';
+
+                if (CurrUser == fromUserName) {
+                    Side = 'left';
+                    TimeSide = 'right';
+
+                }
+                else {
+                    var Notification = 'New Message From ' + fromUserName;
+                    IntervalVal = setInterval("ShowTitleAlert('ShadowsHelp', '" + Notification + "')", 800);
+
+                    var msgcount = $('#' + ctrId).find('#MsgCountP').html();
+                    msgcount++;
+                    $('#' + ctrId).find('#MsgCountP').html(msgcount);
+                    $('#' + ctrId).find('#MsgCountP').attr("title", msgcount + ' New Messages');
+                }
+
+                var divChatP = '<div class="direct-chat-msg ' + Side + '">' +
+                    '<div class="direct-chat-info clearfix">' +
+                    '<span class="direct-chat-name pull-' + Side + '">' + fromUserName + '</span>' +
+                    '<span class="direct-chat-timestamp pull-' + TimeSide + '"">' + CurrentDateTime + '</span>' +
+                    '</div>' +
+
+                    ' <img class="direct-chat-img" src="' + userimg + '" alt="Message User Image">' +
+                    ' <div class="direct-chat-text" >' + message + '</div> </div>';
+
+                $('#' + ctrId).find('#divMessage').append(divChatP);
+
+                var htt = $('#' + ctrId).find('#divMessage')[0].scrollHeight;
+                $('#' + ctrId).find('#divMessage').slimScroll({
+                    height: htt
+                });
             }
 
-           
-        }
-
+        }    
         function GetCurrentDateTime(now) {
 
             var localdate = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
@@ -178,6 +281,33 @@
                     '<span class="contacts-list-name" id="' + id + '">' + name + ' <small class="contacts-list-date pull-right">' + date + '</small> </span>' +
                     ' <span class="contacts-list-msg">How have you been? I was...</span></div></a > </li >');
 
+
+                
+                var UserLink = $('<a id="' + id + '" class="user" >' + name + '<a>');
+                $(code).click(function () {
+
+                    var id = $(UserLink).attr('id');
+
+                    if (userId != id) {
+                        var ctrId = 'private_' + id;
+                        OpenPrivateChatBox(chatHub, id, ctrId, name);
+
+                    }
+
+                });
+
+                var link = $('<span class="contacts-list-name" id="' + id + '">');
+                $(Clist).click(function () {
+
+                    var id = $(link).attr('id');
+
+                    if (userId != id) {
+                        var ctrId = 'private_' + id;
+                        OpenPrivateChatBox(chatHub, id, ctrId, name);
+
+                    }
+
+                });
             }
 
             $("#divusers").append(code);
@@ -214,6 +344,90 @@
 
         }
 
+        // Creation and Opening Private Chat Div
+        function OpenPrivateChatBox(chatHub, userId, ctrId, userName) {
+
+            var PWClass = $('#PWCount').val();
+
+            if ($('#PWCount').val() == 'info')
+                PWClass = 'danger';
+            else if ($('#PWCount').val() == 'danger')
+                PWClass = 'warning';
+            else
+                PWClass = 'info';
+
+            $('#PWCount').val(PWClass);
+            var div1 = ' <div class="col-md-4"> <div  id="' + ctrId + '" class="box box-solid box-' + PWClass + ' direct-chat direct-chat-' + PWClass + '">' +
+                '<div class="box-header with-border">' +
+                ' <h3 class="box-title">' + userName + '</h3>' +
+
+                ' <div class="box-tools pull-right">' +
+                ' <span data-toggle="tooltip" id="MsgCountP" title="0 New Messages" class="badge bg-' + PWClass + '">0</span>' +
+                ' <button type="button" class="btn btn-box-tool" data-widget="collapse">' +
+                '    <i class="fa fa-minus"></i>' +
+                '  </button>' +
+                '  <button id="imgDelete" type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button></div></div>' +
+
+                ' <div class="box-body">' +
+                ' <div id="divMessage" class="direct-chat-messages">' +
+
+                ' </div>' +
+
+                '  </div>' +
+                '  <div class="box-footer">' +
+
+
+                '    <input type="text" id="txtPrivateMessage" name="message" placeholder="Type Message ..." class="form-control"  />' +
+
+                '  <div class="input-group">' +
+                '    <input type="text" name="message" placeholder="Type Message ..." class="form-control" style="visibility:hidden;" />' +
+                '   <span class="input-group-btn">' +
+                '          <input type="button" id="btnSendMessage" class="btn btn-' + PWClass + ' btn-flat" value="send" />' +
+                '   </span>' +
+                '  </div>' +
+
+                ' </div>' +
+                ' </div></div>';
+
+
+
+            var $div = $(div1);
+
+            // Closing Private Chat Box
+            $div.find('#imgDelete').click(function () {
+                $('#' + ctrId).remove();
+            });
+
+              // Send Button event in Private Chat
+            $div.find("#btnSendMessage").click(function () {
+
+                $textBox = $div.find("#txtPrivateMessage");
+
+                var msg = $textBox.val();
+                if (msg.length > 0) {
+                    chatHub.server.sendPrivateMessage(userId, msg);
+                    $textBox.val('');
+                }
+            });
+
+            // Text Box event on Enter Button
+            $div.find("#txtPrivateMessage").keypress(function (e) {
+                if (e.which == 13) {
+                    $div.find("#btnSendMessage").click();
+                }
+            });
+
+            // Clear Message Count on Mouse over           
+            $div.find("#divMessage").mouseover(function () {
+
+                $("#MsgCountP").html('0');
+                $("#MsgCountP").attr("title", '0 New Messages');
+            });
+
+            // Append private chat div inside the main div
+            $('#PriChatDiv').append($div);
+        }
+
     </script>
 
 </head>
@@ -228,7 +442,7 @@
           <!-- mini logo for sidebar mini 50x50 pixels -->
           
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>SignalR</b>ShadowsHelp</span>
+          <span class="logo-lg"><b></b>ShadowsHelp</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -334,6 +548,16 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row" id="PriChatDiv">
+                        </div>
+                        <textarea class="form-control" style="visibility: hidden;"></textarea>
+                        <!--/.private-chat -->
+                    </div>
+                </div>
+
+
                 <!-- /.col -->
 
 
@@ -360,12 +584,12 @@
 
                     <div class="container">
 
-                        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+<%--                    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                                                    
                         <Triggers>
                             <asp:PostBackTrigger ControlID="btnChangePicModel" />
                         </Triggers>
-                        <ContentTemplate>
+                  <ContentTemplate>--%>
 
                         <div class="row">
                             <div class="col-md-12">
@@ -382,7 +606,7 @@
                                             </td>
                                             <td class="col-md-4">
                                                 
-                                          <%--  <asp:Button ID="btnChangePicModel" runat="server" Text="Update Picture" CssClass="btn btn-flat btn-success" OnClick="btnChangePicModel_Click" />--%>
+                                         <%-- <asp:Button ID="btnChangePicModel" runat="server" Text="Update Picture" CssClass="btn btn-flat btn-success" OnClick="btnChangePicModel_Click" />--%>
 
                                                    
                                             </td>
