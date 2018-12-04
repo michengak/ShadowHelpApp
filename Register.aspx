@@ -55,11 +55,11 @@
           <button type="submit" class="btn btn-primary btn-block btn-flat" id="btnRegister" runat="server" onserverclick="btnRegister_ServerClick">Register</button>
         </div>
         <!-- /.col -->
-      <%--</div>
+      </div>
    
     <a href="Login.aspx" class="text-center">I am already a member</a>
-  </div>--%>
-  <!-- /.form-box -->
+  </div>
+
 </div>
 
     </form>
